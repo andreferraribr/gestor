@@ -1,0 +1,108 @@
+---
+title: "Documentos emitidos"
+editor: visual
+lang: "pt"
+format:
+  html:
+    code-fold: true
+    code-summary: "mostrar o código"
+    code-overflow: wrap
+execute:
+  warning: false
+  message: false
+  error: false
+  freeze: auto  # re-render only when source changes 
+---
+
+```{r}
+#| warning: false
+#| message: false
+#| error: false
+library(readxl)
+library(tidyverse)
+library(leaflet)
+library(janitor)
+library(lubridate)
+library(tidyverse)
+library(purrr)
+library(knitr)
+library(kableExtra)
+library(DescTools)
+library(zoo)
+library(stringr)
+library(data.table)
+library(DT)
+```
+
+```{r}
+`%notin%` <- Negate(`%in%`)
+
+# formato dos numeros
+myNumFmt <- as.fmt(digits=0, big.mark=".")
+
+options(scipen = 999)
+```
+
+```{r}
+lista_ugs_gestor <- read_excel("lista_ugs_gestor.xlsx") %>% clean_names()
+```
+
+```{r}
+ug_selecionada <-  170166
+```
+
+```{r}
+docs_ug_170166 <- read_excel("docs_ug_170166.xlsx") %>% clean_names()
+```
+
+## Documentos emitidos
+
+### Quantitativo por tipo de documento
+
+```{r}
+docs_ug_170166 %>% group_by(doc_tipo_nome) %>% count() %>% arrange(desc(n)) %>% kable()
+```
+
+### Qual operador emitiu o documento
+
+```{r}
+docs_ug_170166 %>% group_by(doc_lancado_por_nome ) %>% count() %>% arrange(desc(n)) %>% kable()
+```
+
+### Tipo de favorecido: quantitativo
+
+```{r}
+docs_ug_170166 %>% group_by(favorecido_tipo_nome ) %>% count() %>% arrange(desc(n)) %>% head(20) %>% kable()
+```
+
+### Principais UGs favorecidas
+
+```{r}
+docs_ug_170166 %>% filter(favorecido_tipo_nome == "UNIDADE GESTORA") %>% group_by(favorecido_doc_nome ) %>% count() %>% arrange(desc(n)) %>% head(20) %>% kable()
+```
+
+### Favorecidos e tipos de documentos
+
+```{r}
+docs_ug_170166 %>% filter(doc_tipo_codigo != "NS") %>% group_by( favorecido_doc_nome, doc_tipo_nome ) %>% count() %>% arrange(desc(n)) %>% head(20) %>% kable()
+```
+
+### Sistema de origem
+
+```{r}
+docs_ug_170166 %>% group_by(doc_sistema_origem ) %>% count() %>% arrange(desc(n)) %>% kable()
+```
+
+### Data de lançamento do documento
+
+```{r}
+docs_ug_170166 %>% group_by(doc_lancado_por_data_acesso ) %>% count() %>% arrange(desc(n)) %>% head(10)%>% kable()
+```
+
+### Documentos emitidos no dia `r (docs_ug_170166 %>% group_by(doc_lancado_por_data_acesso ) %>% count() %>% arrange(desc(n)))[1,1]`
+
+```{r}
+docs_ug_170166 %>%filter(doc_lancado_por_data_acesso %in% c((docs_ug_170166 %>% group_by(doc_lancado_por_data_acesso ) %>% count() %>% arrange(desc(n)))[1,1])) %>% group_by(doc_tipo_nome) %>% count() %>% arrange(desc(n)) %>% head(10)%>% kable()
+```
+
+Execução orçamentária e financeira

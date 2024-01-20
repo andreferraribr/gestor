@@ -1,0 +1,134 @@
+---
+title: "Gestão orçamentária"
+editor: visual
+lang: "pt"
+format:
+  html:
+    code-fold: true
+    code-summary: "mostrar o código"
+    code-overflow: wrap
+execute:
+  warning: false
+  message: false
+  error: false
+  freeze: auto  # re-render only when source changes 
+---
+
+```{r}
+#| warning: false
+#| message: false
+#| error: false
+library(readxl)
+library(tidyverse)
+library(leaflet)
+library(janitor)
+library(lubridate)
+library(tidyverse)
+library(purrr)
+library(knitr)
+library(kableExtra)
+library(DescTools)
+library(zoo)
+library(stringr)
+library(data.table)
+library(DT)
+```
+
+```{r}
+`%notin%` <- Negate(`%in%`)
+
+# formato dos numeros
+myNumFmt <- as.fmt(digits=0, big.mark=".")
+
+options(scipen = 999)
+```
+
+```{r}
+lista_ugs_gestor <- read_excel("lista_ugs_gestor.xlsx") %>% clean_names()
+```
+
+```{r}
+ug_selecionada <-  170166
+```
+
+## Fluxo orçamentário
+
+### Movimentação de crédito
+
+![](images/nc_siafi.png)
+
+[Destaque](https://www.congressonacional.leg.br/legislacao-e-publicacoes/glossario-orcamentario/-/orcamentario/termo/destaque_de_credito) : descentralização de crédito orçamentário de uma unidade orçamentária para uma unidade orçamentária de outro órgão realizada por meio de TED.
+
+[Provisão](https://www.congressonacional.leg.br/legislacao-e-publicacoes/glossario-orcamentario/-/orcamentario/termo/provisao_orcamentaria): Descentralização de crédito orçamentário de uma unidade orçamentária para outra do mesmo órgão.
+
+```{r}
+ug_nc <- read_excel("170166_nc.xlsx") %>% clean_names() 
+
+ug_nc <- ug_nc %>% mutate(tipo_descentralizacao = ifelse(emitente_orgao_codigo == orgao_uge_codigo, "provisao","destaque"))
+```
+
+```{r}
+#| warning: false
+#| message: false
+#| error: false
+#| label: tbl-descentralizacao_170166
+#| tbl-cap: Quem transferiu crédito disponível para a Superintendência (R$ mil)
+
+ug_nc %>% group_by( emitente_orgao_nome,ug_executora_nome) %>% summarise(valor = (sum(provisao_recebida, na.rm = TRUE)+sum(destaque_recebido, na.rm = TRUE) )/1000) %>% arrange(desc(valor))%>% head()%>% kable(col.names = c("De", "Para", "Valor"), digits = 1, format.args = list(big.mark = ".", decimal.mark = ",") )
+```
+
+```{r}
+#| warning: false
+#| message: false
+#| error: false
+#| label: tbl-destaque_provisão
+#| tbl-cap: Tipo de descentralização para a Superintendência (R$ mil)
+ug_nc %>% group_by(tipo_descentralizacao)%>% summarise(valor = (sum(provisao_recebida, na.rm = TRUE)+sum(destaque_recebido, na.rm = TRUE) )/1000) %>% kable(col.names = c("Tipo de descentralização", "Valor"), digits = 1, format.args = list(big.mark = ".", decimal.mark = ",") )
+```
+
+```{r}
+#| warning: false
+#| message: false
+#| error: false
+#| label: tbl-obs
+#| tbl-cap: obs
+
+ug_nc %>% select( doc_observacao) %>% head()%>% kable( )
+```
+
+```{r}
+ug_nc %>% select(conta_corrente,ptres, fonte_recursos_detalhada_codigo, fonte_recursos_detalhada_nome,natureza_despesa_codigo, natureza_despesa_nome,ug_responsavel_codigo,ug_responsavel_nome, pi_codigo_pi, pi_nome ) %>% tail(1)%>% pivot_longer( cols = everything()) %>% kable()
+```
+
+### Crédito disponível
+
+```         
+```
+
+### Detalhamento do orçamento
+
+```{r}
+ug_nd <- read_excel("170166_nd.xlsx") %>% clean_names() 
+```
+
+```{r}
+ug_nd %>% group_by(documento,conta_corrente) %>% summarise(credito_disponivel= sum(credito_disponivel)) %>% head() %>% kable()
+```
+
+## Fluxo financeiro
+
+### movimentação financeira
+
+### limite de saque
+
+Provisão
+
+Fases da execução da despesa
+
+Empenho
+
+Liquidação
+
+Pagamento
+
+Restos a pagar
