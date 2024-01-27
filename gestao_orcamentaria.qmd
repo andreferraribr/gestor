@@ -32,6 +32,7 @@ library(zoo)
 library(stringr)
 library(data.table)
 library(DT)
+library(plotly)
 ```
 
 ```{r}
@@ -47,9 +48,17 @@ options(scipen = 999)
 lista_ugs_gestor <- read_excel("lista_ugs_gestor.xlsx") %>% clean_names()
 ```
 
+### ug_selecionada
+
 ```{r}
 ug_selecionada <-  170166
 ```
+
+## Quem executa o orçamento x Quem é o "dono" do orçamento
+
+### Visão UO (unidade orçamentária)
+
+### Visão UGE (unidade gestora)
 
 ## Fluxo orçamentário
 
@@ -121,14 +130,55 @@ ug_nd %>% group_by(documento,conta_corrente) %>% summarise(credito_disponivel= s
 
 ### limite de saque
 
-Provisão
+### Provisão
 
-Fases da execução da despesa
+### Fases da execução da despesa
 
-Empenho
+### Empenho
 
-Liquidação
+### Liquidação
 
-Pagamento
+### Pagamento
 
-Restos a pagar
+### Restos a pagar
+
+## Pontos de controle
+
+```{r}
+saldos <- read_excel("saldos.xlsx") %>% clean_names() %>% mutate(emissao_dia =  ifelse(emissao_dia == "000/2023", "01/01/2023", emissao_dia)) %>% mutate(dia_mes = parse_date_time(emissao_dia,"dmy"))
+
+saldos <- rename(saldos, limite_de_saque = number_sg_limite_de_saque_diversos)
+saldos <- rename(saldos, RP_a_pagar = restos_a_pagar_a_pagar_proc_e_n_proc)
+saldos <- rename(saldos, pre_empenhadas  = despesas_pre_empenhadas_a_empenhar)
+saldos <- rename(saldos, a_liquidar  = despesas_empenhadas_a_liquidar)
+saldos <- rename(saldos, a_pagar  = despesas_liquidadas_a_pagar)
+
+
+saldos[is.na(saldos)] <- 0
+```
+
+```{r}
+ saldos %>% filter(ug_executora_codigo == ug_selecionada ) %>% group_by(dia_mes)   %>%summarise(credito_disponivel= sum(credito_disponivel)) %>% mutate(saldo_acumulado = cumsum(credito_disponivel), dia_mes = format(dia_mes, "%d-%b" )) %>% kable(format.args = list(big.mark = ".", decimal.mark = ","))
+```
+
+```{r}
+p <- ggplot( saldos %>% filter(ug_executora_codigo == ug_selecionada ) %>% group_by(dia_mes)   %>%summarise(credito_disponivel= sum(credito_disponivel)) %>% mutate(saldo_acumulado = cumsum(credito_disponivel)),aes(x= dia_mes, y= saldo_acumulado )) + geom_line()
+
+ggplotly(p)
+```
+
+```{r}
+saldos %>% filter(ug_executora_codigo == ug_selecionada ) %>% group_by(dia_mes) %>%summarise(across(where(is.numeric), sum))%>%mutate(across(where(is.numeric), cumsum, .names = "{col}_acumulado"),) %>% select(dia_mes, ends_with( "acumulado")) %>% kable(format.args = list(big.mark = ".", decimal.mark = ","))
+```
+
+```{r}
+saldos %>% filter(ug_executora_codigo == ug_selecionada ) %>% group_by(dia_mes) %>%summarise(across(where(is.numeric), sum))%>%mutate(across(where(is.numeric), cumsum, .names = "{col}_")) %>% select(dia_mes, ends_with( "_")) %>% pivot_longer(cols = ends_with( "_"), names_to = "item", values_to = "saldo")
+
+
+saldos %>% filter(ug_executora_codigo == ug_selecionada ) %>% summarise(across(where(is.numeric), list(mínimo = min,max = max,soma = sum,média =mean),  na.rm = TRUE))%>% pivot_longer(cols = where(is.numeric), names_to = "item", values_to = "saldo")%>% kable(digits=1,format.args = list(big.mark = ".", decimal.mark = ","))
+
+
+p <- ggplot( saldos %>% filter(ug_executora_codigo == ug_selecionada ) %>% group_by(dia_mes) %>%summarise(across(where(is.numeric), sum))%>%mutate(across(where(is.numeric), cumsum, .names = "{col}_")) %>% select(dia_mes, ends_with( "_")) %>% pivot_longer(cols = ends_with( "_"), names_to = "item", values_to = "saldo"),aes(x= dia_mes, y= saldo , colour = item)) + geom_line()+facet_wrap(~item, ncol = 1)+ theme(legend.position="none")
+
+ggplotly( p)
+```
