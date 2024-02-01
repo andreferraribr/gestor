@@ -95,6 +95,8 @@ ug_selecionada <-  170166
 
 ![](/images/codigo_excecao.png)
 
+### Valor Doc x métrica
+
 ## Vídeos
 
 {{< video https://www.youtube.com/watch?v=_P88liyyk0c >}}

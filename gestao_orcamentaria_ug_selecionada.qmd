@@ -11,6 +11,7 @@ execute:
   warning: false
   message: false
   error: false
+  cache: refresh
   # freeze: auto  # re-render only when source changes 
 ---
 
@@ -74,23 +75,24 @@ ug_selecionada <- read_csv("ug_selecionada.csv") $ug_selecionada
 [Provisão](https://www.congressonacional.leg.br/legislacao-e-publicacoes/glossario-orcamentario/-/orcamentario/termo/provisao_orcamentaria): Descentralização de crédito orçamentário de uma unidade orçamentária para outra do mesmo órgão.
 
 ```{r}
-ug_nc <- read_excel(paste0(ug_selecionada, "_nc.xlsx")) %>% clean_names() 
+
+ug_nc <- read_excel(paste0(ug_selecionada,"_nc.xlsx")) %>% clean_names() 
 
 if(!c("destaque_recebido") %in% colnames(ug_nc)){ug_nc <- ug_nc %>%  mutate(destaque_recebido = 0)}
 
 if(!c("provisao_recebida") %in% colnames(ug_nc)){ug_nc <- ug_nc %>%  mutate(provisao_recebida = 0)}
 
 ug_nc <- ug_nc %>% mutate(tipo_descentralizacao = ifelse(emitente_orgao_codigo == orgao_uge_codigo, "provisao","destaque"))
-
-
 ```
 
 ```{r}
 #| warning: false
 #| message: false
 #| error: false
-#| label: tbl-descentralizacao_ug_selecionada
-#| tbl-cap: Quem transferiu crédito disponível para a Superintendência (R$ mil)
+#| label: tbl-descentralizacao_para_a_ug
+#| tbl-cap: Quem transferiu crédito disponível para a UG (R$ mil)
+
+
 
 ug_nc %>% group_by( emitente_orgao_nome,ug_executora_nome) %>% summarise(valor = (sum(provisao_recebida, na.rm = TRUE)+sum(destaque_recebido, na.rm = TRUE) )/1000) %>% arrange(desc(valor))%>% head()%>% kable(col.names = c("De", "Para", "Valor"), digits = 1, format.args = list(big.mark = ".", decimal.mark = ",") )
 ```
@@ -126,7 +128,9 @@ ug_nc %>% select(conta_corrente,ptres, fonte_recursos_detalhada_codigo, fonte_re
 ### Detalhamento do orçamento
 
 ```{r}
-ug_nd <- read_excel(paste0(ug_selecionada, "_nd.xlsx")) %>% clean_names() 
+ug_nd <- read_excel(paste0(ug_selecionada,"_nd.xlsx")) %>% clean_names() 
+
+
 ```
 
 ```{r}

@@ -55,26 +55,65 @@ ug_selecionada <-  170166
 
 ### Documento (como)
 
+![](images/contagem_docs.png)
+
+Quais documentos você já emitiu?
+
+Você tem algum relato interessante/curioso sobre emissão de documento? Qual?
+
 ### Emitente UG (quem)
+
+Quais documentos a sua UG emite?
+
+Qual é o principal documento emitido pela sua UG?
 
 ### Favorecido DOC (quem)
 
-### Conta contábil (o que)
+![](images/tipo_doc.png)
 
-### Conta Corrente (o que)
+Quais são os principais favorecidos da sua UG?
+
+A sua UG é a favorecida de algum documento? Quais?
+
+### Conta contábil (o que/onde)
+
+
+Em quais contas contábeis você costuma fazer lançamentos?
+
+![](images/conconta.png)
+
+### Conta Corrente (o que/onde)
+
+Quando você faz lançamentos contábeis, quais tipos de Contas Correntes são sensibilizados?
+
+![](images/conindcont.png)
 
 ### Emissão dia (quando)
 
+Quais são os dias com mais emissão de documentos?
+
+
+
 ### Doc valor (quanto)
 
-### Documento de origem (qual vínculo)
+Qual foi o maior valor lançado por você?
+
+![](images/ob_codiv.png)
 
 ## Consultar dados
 
+
+
 ### CONRAZAO (D)
 
-### CONDOC (D)
+![](images/conrazao.png)
+
+![](images/conrazao_nc_30_01.png)
+
+### BALANCETE (D+1)
+
+![](images/balancete.png)
 
 ### CONOR (D+1)
 
-### BALANCETE (D+1)
+### 

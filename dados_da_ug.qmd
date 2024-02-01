@@ -11,7 +11,8 @@ execute:
   warning: false
   message: false
   error: false
-  freeze: auto  # re-render only when source changes 
+  cache: refresh
+  # freeze: auto  # re-render only when source changes 
 ---
 
 ```{r}
@@ -32,6 +33,7 @@ library(zoo)
 library(stringr)
 library(data.table)
 library(DT)
+library(readr)
 ```
 
 ```{r}
@@ -48,7 +50,9 @@ lista_ugs_gestor <- read_excel("lista_ugs_gestor.xlsx") %>% clean_names()
 ```
 
 ```{r}
-ug_selecionada <-  170166
+# ug_selecionada <-  "070015"
+
+ug_selecionada <- read_csv("ug_selecionada.csv")$ug_selecionada
 ```
 
 ## Dados da UG

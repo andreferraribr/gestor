@@ -66,7 +66,7 @@ docs_ug_170166 %>% group_by(doc_tipo_nome) %>% count() %>% arrange(desc(n)) %>% 
 ### Qual operador emitiu o documento
 
 ```{r}
-docs_ug_170166 %>% group_by(doc_lancado_por_nome ) %>% count() %>% arrange(desc(n)) %>% kable()
+docs_ug_170166 %>% group_by(doc_lancado_por_nome )%>% mutate(doc_lancado_por_nome = str_extract(doc_lancado_por_nome, regex("[A-Z]*"))) %>% count() %>% arrange(desc(n)) %>% kable()
 ```
 
 ### Tipo de favorecido: quantitativo
