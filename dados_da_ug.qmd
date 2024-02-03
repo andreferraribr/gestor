@@ -3,6 +3,7 @@ title: "Dados da UG"
 editor: visual
 lang: "pt"
 format:
+  # pdf: default
   html:
     code-fold: true
     code-summary: "mostrar o código"
@@ -12,7 +13,8 @@ execute:
   message: false
   error: false
   cache: refresh
-  # freeze: auto  # re-render only when source changes 
+  freeze: auto
+  # echo: false
 ---
 
 ```{r}
@@ -60,27 +62,62 @@ ug_selecionada <- read_csv("ug_selecionada.csv")$ug_selecionada
 ### Nome e local
 
 ```{r}
-lista_ugs_gestor %>% filter(ug_executora_codigo == ug_selecionada) %>% select( ug_executora_nome, ug_executora_codigo, uge_municipio_nome, uge_uf_sigla) %>%  pivot_longer( cols = everything()) %>% kable(col.names = c("", ""))
+lista_ugs_gestor %>% 
+  filter(ug_executora_codigo == ug_selecionada) %>%
+  select( ug_executora_nome, ug_executora_codigo, 
+          uge_municipio_nome, uge_uf_sigla) %>% 
+  pivot_longer( cols = everything()) %>% mutate(name = str_remove(name,"ug_"), name = str_remove(name,"executora"),name = str_remove(name,"uge"), name =str_to_upper(  str_replace_all(name,"_"," ")))%>% kable(col.names = c("Item", "Resultado"))
 ```
 
 ### Relação dos responsáveis
 
 ```{r}
-lista_ugs_gestor %>% filter(ug_executora_codigo == ug_selecionada) %>% select(uge_assinatura_ne_responsavel_nome,uge_assinatura_ne_substituto_nome,uge_conf_documental_responsavel_nome,uge_conf_documental_substituto_nome,uge_contador_responsavel_nome,uge_contador_substituto_nome,uge_fechamento_lc_responsavel_nome,uge_fechamento_lc_substituto_nome,uge_gestor_financeiro_responsavel_nome,uge_gestor_financeiro_substituto_nome,uge_inscricao_ne_rp_responsavel_nome,uge_inscricao_ne_rp_substituto_nome,uge_ordenador_responsavel_nome,uge_ordenador_substituto_nome) %>% pivot_longer( cols = everything()) %>% kable()
+lista_ugs_gestor %>%
+  filter(ug_executora_codigo == ug_selecionada) %>%
+  select(uge_assinatura_ne_responsavel_nome,
+         uge_assinatura_ne_substituto_nome,
+         uge_conf_documental_responsavel_nome,
+         uge_conf_documental_substituto_nome,
+         uge_contador_responsavel_nome,
+         uge_contador_substituto_nome,
+         uge_fechamento_lc_responsavel_nome,
+         uge_fechamento_lc_substituto_nome,
+         uge_gestor_financeiro_responsavel_nome,
+         uge_gestor_financeiro_substituto_nome,
+         uge_inscricao_ne_rp_responsavel_nome,
+         uge_inscricao_ne_rp_substituto_nome,
+         uge_ordenador_responsavel_nome,
+         uge_ordenador_substituto_nome)   %>%
+  pivot_longer( cols = everything())%>% 
+  mutate (value =  str_extract(value, regex("[A-Z]*")),
+          name = str_sub(name, start = 4L, end= -5L),
+          name =str_to_upper(  str_replace_all(name,"_"," ")) )%>%
+  kable(col.names =c( "Atribuição","Responsáveis"))
 ```
 
 ### Hierarquia organizacional
 
 ```{r}
-lista_ugs_gestor %>% filter(ug_executora_codigo == ug_selecionada) %>% select( orgao_uge_nome, orgao_uge_orgao_superior_nome, orgao_uge_orgao_maximo_nome, uge_ug_setorial_financeira_nome, uge_ug_setorial_financeira_codigo, uge_ug_setorial_orcamentaria_nome, uge_ug_setorial_orcamentaria_codigo) %>% pivot_longer( cols = everything()) %>% kable()
+lista_ugs_gestor %>% 
+  filter(ug_executora_codigo == ug_selecionada) %>%
+  select( orgao_uge_nome,
+          orgao_uge_orgao_superior_nome, 
+          orgao_uge_orgao_maximo_nome,
+          uge_ug_setorial_financeira_nome, 
+          uge_ug_setorial_financeira_codigo,
+          uge_ug_setorial_orcamentaria_nome, 
+          uge_ug_setorial_orcamentaria_codigo) %>%
+  pivot_longer( cols = everything())%>% mutate(name = str_remove(name,"uge_"),
+          name =str_to_upper(  str_replace_all(name,"_"," "))) %>% kable(col.names = c("Item","Resultado"))
 ```
 
 ### Opções sobre a execução orçamentária e centro de custos
 
 ```{r}
-lista_ugs_gestor %>% filter(ug_executora_codigo == ug_selecionada) %>% select(orgao_uge_detalhamento_credito, orgao_uge_utiliza_pi_s_n, orgao_uge_usa_centro_custo_s_n ) %>% pivot_longer( cols = everything()) %>% kable()
-```
-
-```{r}
-docs_ug_170166 <- read_excel("docs_ug_170166.xlsx") %>% clean_names()
+lista_ugs_gestor %>% filter(ug_executora_codigo == ug_selecionada) %>%
+  select(orgao_uge_detalhamento_credito,
+         orgao_uge_utiliza_pi_s_n,
+         orgao_uge_usa_centro_custo_s_n ) %>%
+  pivot_longer( cols = everything())%>% mutate(name = str_remove(name,"orgao_uge_"),
+          name =str_to_upper( str_replace_all(name,"_"," ")) )%>% kable(col.names = c("Regras","Opção"))
 ```

@@ -3,6 +3,7 @@ title: "Tesouro Gerencial"
 editor: visual
 lang: "pt"
 format:
+  # pdf: default
   html:
     code-fold: true
     code-summary: "mostrar o código"
@@ -11,7 +12,8 @@ execute:
   warning: false
   message: false
   error: false
-  freeze: auto  # re-render only when source changes 
+  freeze: false
+  # echo: false
 ---
 
 ```{r}

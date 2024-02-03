@@ -3,6 +3,7 @@ title: "Documentos emitidos"
 editor: visual
 lang: "pt"
 format:
+  # pdf: default
   html:
     code-fold: true
     code-summary: "mostrar o código"
@@ -11,7 +12,9 @@ execute:
   warning: false
   message: false
   error: false
-  freeze: auto  # re-render only when source changes 
+  cache: refresh
+  freeze: auto
+  # echo: false
 ---
 
 ```{r}
@@ -32,6 +35,7 @@ library(zoo)
 library(stringr)
 library(data.table)
 library(DT)
+library(readr)
 ```
 
 ```{r}
@@ -48,11 +52,14 @@ lista_ugs_gestor <- read_excel("lista_ugs_gestor.xlsx") %>% clean_names()
 ```
 
 ```{r}
-ug_selecionada <-  170166
+# ug_selecionada <-  "070015"
+
+ug_selecionada <- read_csv("ug_selecionada.csv") $ug_selecionada
 ```
 
 ```{r}
-docs_ug_170166 <- read_excel("docs_ug_170166.xlsx") %>% clean_names()
+docs_ug <- read_excel(paste0("docs_ug_",ug_selecionada,".xlsx")) %>%
+            clean_names()
 ```
 
 ## Documentos emitidos
@@ -60,49 +67,72 @@ docs_ug_170166 <- read_excel("docs_ug_170166.xlsx") %>% clean_names()
 ### Quantitativo por tipo de documento
 
 ```{r}
-docs_ug_170166 %>% group_by(doc_tipo_nome) %>% count() %>% arrange(desc(n)) %>% kable()
+docs_ug %>% group_by(doc_tipo_nome) %>% count() %>% arrange(desc(n)) %>%
+            kable()
 ```
 
 ### Qual operador emitiu o documento
 
 ```{r}
-docs_ug_170166 %>% group_by(doc_lancado_por_nome )%>% mutate(doc_lancado_por_nome = str_extract(doc_lancado_por_nome, regex("[A-Z]*"))) %>% count() %>% arrange(desc(n)) %>% kable()
+docs_ug %>% group_by(doc_lancado_por_nome ) %>% 
+  mutate(doc_lancado_por_nome = 
+        str_extract(doc_lancado_por_nome, regex("[A-Z]*"))) %>%
+  count() %>% arrange(desc(n)) %>% kable()
+```
+
+```{r}
+#| eval: false
+docs_ug %>% group_by(doc_tipo_codigo,doc_lancado_por_nome  ) %>%
+  mutate(doc_lancado_por_nome =
+          str_extract(doc_lancado_por_nome, regex("[A-Z]*"))) %>%
+  count()  %>% kable()
 ```
 
 ### Tipo de favorecido: quantitativo
 
 ```{r}
-docs_ug_170166 %>% group_by(favorecido_tipo_nome ) %>% count() %>% arrange(desc(n)) %>% head(20) %>% kable()
+docs_ug %>% group_by(favorecido_tipo_nome ) %>% count() %>%
+            arrange(desc(n)) %>% head(20) %>% kable()
 ```
 
 ### Principais UGs favorecidas
 
 ```{r}
-docs_ug_170166 %>% filter(favorecido_tipo_nome == "UNIDADE GESTORA") %>% group_by(favorecido_doc_nome ) %>% count() %>% arrange(desc(n)) %>% head(20) %>% kable()
+docs_ug %>% filter(favorecido_tipo_nome == "UNIDADE GESTORA") %>%
+            group_by(favorecido_doc_nome ) %>% count() %>%
+            arrange(desc(n)) %>% head(20) %>% kable()
 ```
 
 ### Favorecidos e tipos de documentos
 
 ```{r}
-docs_ug_170166 %>% filter(doc_tipo_codigo != "NS") %>% group_by( favorecido_doc_nome, doc_tipo_nome ) %>% count() %>% arrange(desc(n)) %>% head(20) %>% kable()
+docs_ug %>% filter(doc_tipo_codigo != "NS") %>%
+            group_by( favorecido_doc_nome, doc_tipo_codigo ) %>%
+            count() %>% arrange(desc(n)) %>% head(20) %>% kable()
 ```
 
 ### Sistema de origem
 
 ```{r}
-docs_ug_170166 %>% group_by(doc_sistema_origem ) %>% count() %>% arrange(desc(n)) %>% kable()
+docs_ug %>% group_by(doc_sistema_origem ) %>%
+            count() %>% arrange(desc(n)) %>% kable()
 ```
 
 ### Data de lançamento do documento
 
 ```{r}
-docs_ug_170166 %>% group_by(doc_lancado_por_data_acesso ) %>% count() %>% arrange(desc(n)) %>% head(10)%>% kable()
+docs_ug %>% group_by(doc_lancado_por_data_acesso ) %>%
+            count() %>% arrange(desc(n)) %>% head(10)%>% kable()
 ```
 
-### Documentos emitidos no dia `r (docs_ug_170166 %>% group_by(doc_lancado_por_data_acesso ) %>% count() %>% arrange(desc(n)))[1,1]`
+### Documentos emitidos no dia `r (docs_ug %>% group_by(doc_lancado_por_data_acesso ) %>% count() %>% arrange(desc(n)))[1,1]`
 
 ```{r}
-docs_ug_170166 %>%filter(doc_lancado_por_data_acesso %in% c((docs_ug_170166 %>% group_by(doc_lancado_por_data_acesso ) %>% count() %>% arrange(desc(n)))[1,1])) %>% group_by(doc_tipo_nome) %>% count() %>% arrange(desc(n)) %>% head(10)%>% kable()
+docs_ug %>%
+  filter(doc_lancado_por_data_acesso %in% 
+           c((docs_ug %>% group_by(doc_lancado_por_data_acesso ) %>%
+  count() %>% arrange(desc(n)))[1,1])) %>% group_by(doc_tipo_nome)%>%
+  count() %>% arrange(desc(n)) %>% head(10)%>% kable()
 ```
 
 Execução orçamentária e financeira

@@ -3,6 +3,7 @@ title: "SIAFI"
 editor: visual
 lang: "pt"
 format:
+  # pdf: default
   html:
     code-fold: true
     code-summary: "mostrar o código"
@@ -11,7 +12,8 @@ execute:
   warning: false
   message: false
   error: false
-  freeze: auto  # re-render only when source changes 
+  freeze: auto
+  echo: false
 ---
 
 ```{r}
@@ -55,65 +57,92 @@ ug_selecionada <-  170166
 
 ### Documento (como)
 
+Todo lançamento contábil inicia-se com a emissão de um documento.
+
+Em 2023, foram emitidos xxx documentos, sendo xxx ordens bancárias.
+
 ![](images/contagem_docs.png)
 
-Quais documentos você já emitiu?
+*Quais documentos você já emitiu?*
 
-Você tem algum relato interessante/curioso sobre emissão de documento? Qual?
+*Você tem algum relato interessante/curioso sobre emissão de documento? Qual?*
 
 ### Emitente UG (quem)
 
-Quais documentos a sua UG emite?
+Toda a execução do SIAFI ocorre no nível das Unidades Gestoras (UG). Quando o orçamento é elaborado utiliza-se o termo unidade orçamentária (UO), contudo quando o orçamento é registrado e executado, tudo ocorre nas UGs. Existe uma tabela no SIAFI relacionado as UOs às UGs.
 
-Qual é o principal documento emitido pela sua UG?
+![LOA 2024: detalhamento orçamentário do TRE-ES](images/loa_detalhamento_acao_tre_es.png){#fig-detalhamento_LOA_UO}
+
+*Quais documentos a sua UG emite?*
+
+*Qual é o principal documento emitido pela sua UG?*
+
+*Somente a sua UG pode emitir documentos lançando saldo na sua UG?*
 
 ### Favorecido DOC (quem)
 
-![](images/tipo_doc.png)
+O nosso universo de lançamentos contábeis tem apenas quatro tipos de favorecidos:
 
-Quais são os principais favorecidos da sua UG?
+1.  Unidade gestora (UG)
 
-A sua UG é a favorecida de algum documento? Quais?
+2.   Pessoa jurídica (PJ)
+
+3.  Pessoa física (PF)
+
+4.  Inscrição genérica credora (IC)
+
+![Tipo de documento e tipo de favorecido.](images/tipo_doc.png){#fig-tipo_favorecido width="705"}
+
+*Quais são os principais favorecidos da sua UG?*
+
+Você já emitiu algum documento para IC?
+
+*A sua UG é a favorecida de algum documento? Quais?*
 
 ### Conta contábil (o que/onde)
 
+O CONCONTA traz detalhes da conta contábil. O atributo Conta Corrente é essencial para detalharmos a execução da despesa.
 
-Em quais contas contábeis você costuma fazer lançamentos?
+*Em quais contas contábeis você costuma fazer lançamentos?*
 
-![](images/conconta.png)
+![](images/conconta.png){#fig-CONCONTA}
 
 ### Conta Corrente (o que/onde)
 
-Quando você faz lançamentos contábeis, quais tipos de Contas Correntes são sensibilizados?
+A CONINDCONT retorna o detalhamento do Conta Corrente (CCor). No caso do CCor 080, o SIAFI registra a estrutura da célula da despesa. Os atributos UGR e PI são opcionais (os órgãos definem se utilizarão ou não estes atributos).
 
-![](images/conindcont.png)
+*Quando você faz lançamentos contábeis, quais tipos de Contas Correntes são sensibilizados?*
+
+![](images/conindcont.png){#fig-CONINDCONT}
 
 ### Emissão dia (quando)
 
-Quais são os dias com mais emissão de documentos?
-
-
+*Quais são os dias/períodos com mais emissão de documentos?*
 
 ### Doc valor (quanto)
 
-Qual foi o maior valor lançado por você?
+*Qual foi o maior valor lançado por você?*
 
-![](images/ob_codiv.png)
+![](images/ob_codiv.png){#fig-CONDOC}
 
 ## Consultar dados
 
-
-
 ### CONRAZAO (D)
 
-![](images/conrazao.png)
+A transação CONRAZAO permite ver os saldos atualizados. Ou seja, assim que um documento é emitido e o saldo registado, a CONRAZAO identifica o lançamento.
 
-![](images/conrazao_nc_30_01.png)
+![](images/conrazao.png){#fig-BALANCETE_01}
 
-### BALANCETE (D+1)
+![](images/conrazao_nc_30_01.png){#fig-BALANCETE_02}
 
-![](images/balancete.png)
+### BALANCETE (D-1)
 
-### CONOR (D+1)
+A transação BALANCETE traz os saldos do último dia de fechamento do SIAFI. Por exemplo, um documento emitido no dia 15/03 só aparecerá no BALANCETE a partir do dia 16/03.
+
+![](images/balancete.png){#fig-BALANCETE}
+
+### CONOR (D-1)
+
+Os saldo capturados pela CONOR seguem o mesmo padrão do BALANCETE, sendo assim, a CONOR retorna os saldos do último dia do fechamento so SIAFI.
 
 ### 

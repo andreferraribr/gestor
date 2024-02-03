@@ -3,15 +3,18 @@ title: "Gestão orçamentária"
 editor: visual
 lang: "pt"
 format:
+  pdf: default
   html:
     code-fold: true
     code-summary: "mostrar o código"
     code-overflow: wrap
+  
 execute:
   warning: false
   message: false
   error: false
   cache: refresh
+  # echo: false
   # freeze: auto  # re-render only when source changes 
 ---
 
@@ -78,23 +81,32 @@ ug_selecionada <- read_csv("ug_selecionada.csv") $ug_selecionada
 
 ug_nc <- read_excel(paste0(ug_selecionada,"_nc.xlsx")) %>% clean_names() 
 
-if(!c("destaque_recebido") %in% colnames(ug_nc)){ug_nc <- ug_nc %>%  mutate(destaque_recebido = 0)}
+if(!c("destaque_recebido") %in% colnames(ug_nc)){ug_nc <- ug_nc %>%
+      mutate(destaque_recebido = 0)}
 
-if(!c("provisao_recebida") %in% colnames(ug_nc)){ug_nc <- ug_nc %>%  mutate(provisao_recebida = 0)}
+if(!c("provisao_recebida") %in% colnames(ug_nc)){ug_nc <- ug_nc %>%
+      mutate(provisao_recebida = 0)}
 
-ug_nc <- ug_nc %>% mutate(tipo_descentralizacao = ifelse(emitente_orgao_codigo == orgao_uge_codigo, "provisao","destaque"))
+ug_nc <- ug_nc %>% mutate(tipo_descentralizacao = 
+                         ifelse(emitente_orgao_codigo == orgao_uge_codigo,
+                                "provisao","destaque"))
 ```
 
 ```{r}
 #| warning: false
 #| message: false
 #| error: false
-#| label: tbl-descentralizacao_para_a_ug
-#| tbl-cap: Quem transferiu crédito disponível para a UG (R$ mil)
+#| label: tbl-quem_transfere
+#| tbl-cap: Quem transfere para a UG  (R$ mil)
 
 
 
-ug_nc %>% group_by( emitente_orgao_nome,ug_executora_nome) %>% summarise(valor = (sum(provisao_recebida, na.rm = TRUE)+sum(destaque_recebido, na.rm = TRUE) )/1000) %>% arrange(desc(valor))%>% head()%>% kable(col.names = c("De", "Para", "Valor"), digits = 1, format.args = list(big.mark = ".", decimal.mark = ",") )
+ug_nc %>% group_by( emitente_orgao_nome,ug_executora_nome) %>% 
+  summarise(valor = (sum(provisao_recebida, na.rm = TRUE)+
+                    sum(destaque_recebido, na.rm = TRUE) )/1000) %>% 
+  arrange(desc(valor))%>% head()%>%
+  kable(col.names = c("De", "Para", "Valor"),
+        digits = 1, format.args = list(big.mark = ".", decimal.mark = ",") )
 ```
 
 ```{r}
@@ -102,8 +114,12 @@ ug_nc %>% group_by( emitente_orgao_nome,ug_executora_nome) %>% summarise(valor =
 #| message: false
 #| error: false
 #| label: tbl-destaque_provisão
-#| tbl-cap: Tipo de descentralização para a Superintendência (R$ mil)
-ug_nc %>% group_by(tipo_descentralizacao)%>% summarise(valor = (sum(provisao_recebida, na.rm = TRUE)+sum(destaque_recebido, na.rm = TRUE) )/1000) %>% kable(col.names = c("Tipo de descentralização", "Valor"), digits = 1, format.args = list(big.mark = ".", decimal.mark = ",") )
+#| tbl-cap: Tipo  (R$ mil)
+ug_nc %>% group_by(tipo_descentralizacao)%>% 
+  summarise(valor = (sum(provisao_recebida, na.rm = TRUE)+
+                     sum(destaque_recebido, na.rm = TRUE) )/1000) %>%
+  kable(col.names = c("Tipo de descentralização", "Valor"), 
+        digits = 1, format.args = list(big.mark = ".", decimal.mark = ",") )
 ```
 
 ```{r}
@@ -117,13 +133,20 @@ ug_nc %>% select( doc_observacao) %>% head()%>% kable( )
 ```
 
 ```{r}
-ug_nc %>% select(conta_corrente,ptres, fonte_recursos_detalhada_codigo, fonte_recursos_detalhada_nome,natureza_despesa_codigo, natureza_despesa_nome,ug_responsavel_codigo,ug_responsavel_nome, pi_codigo_pi, pi_nome ) %>% tail(1)%>% pivot_longer( cols = everything()) %>% kable()
+ug_nc %>% select(conta_corrente,
+                 ptres,
+                 fonte_recursos_detalhada_codigo,
+                 fonte_recursos_detalhada_nome,
+                 natureza_despesa_codigo,
+                 natureza_despesa_nome,
+                 ug_responsavel_codigo,
+                 ug_responsavel_nome,
+                 pi_codigo_pi, 
+                 pi_nome ) %>%
+          tail(1)%>% pivot_longer( cols = everything()) %>% kable()
 ```
 
 ### Crédito disponível
-
-```         
-```
 
 ### Detalhamento do orçamento
 
@@ -134,7 +157,9 @@ ug_nd <- read_excel(paste0(ug_selecionada,"_nd.xlsx")) %>% clean_names()
 ```
 
 ```{r}
-ug_nd %>% group_by(documento,conta_corrente) %>% summarise(credito_disponivel= sum(credito_disponivel)) %>% head() %>% kable()
+ug_nd %>% group_by(documento,conta_corrente) %>%
+          summarise(credito_disponivel= sum(credito_disponivel))%>%
+          head() %>% kable()
 ```
 
 ## Fluxo financeiro
@@ -158,7 +183,10 @@ ug_nd %>% group_by(documento,conta_corrente) %>% summarise(credito_disponivel= s
 ## Pontos de controle
 
 ```{r}
-saldos <- read_excel("saldos.xlsx") %>% clean_names() %>% mutate(emissao_dia =  ifelse(emissao_dia == "000/2023", "01/01/2023", emissao_dia)) %>% mutate(dia_mes = parse_date_time(emissao_dia,"dmy"))
+saldos <- read_excel("saldos.xlsx") %>% clean_names() %>% 
+          mutate(emissao_dia =  
+          ifelse(emissao_dia == "000/2023", "01/01/2023", emissao_dia)) %>% 
+          mutate(dia_mes = parse_date_time(emissao_dia,"dmy"))
 
 saldos <- rename(saldos, limite_de_saque = number_sg_limite_de_saque_diversos)
 saldos <- rename(saldos, RP_a_pagar = restos_a_pagar_a_pagar_proc_e_n_proc)
@@ -171,27 +199,71 @@ saldos[is.na(saldos)] <- 0
 ```
 
 ```{r}
- saldos %>% filter(ug_executora_codigo == ug_selecionada ) %>% group_by(dia_mes)   %>%summarise(credito_disponivel= sum(credito_disponivel)) %>% mutate(saldo_acumulado = cumsum(credito_disponivel), dia_mes = format(dia_mes, "%d-%b" )) %>% kable(format.args = list(big.mark = ".", decimal.mark = ","))
+ saldos %>% filter(ug_executora_codigo == ug_selecionada, dia_mes < "2023-01-31" ) %>%
+            group_by(dia_mes)  %>%
+            summarise(credito_disponivel= sum(credito_disponivel)) %>% 
+            mutate(saldo_acumulado = cumsum(credito_disponivel),
+                   dia_mes = format(dia_mes, "%d-%b" )) %>%
+            kable(format.args = list(big.mark = ".", decimal.mark = ","))
 ```
 
 ```{r}
-p <- ggplot( saldos %>% filter(ug_executora_codigo == ug_selecionada ) %>% group_by(dia_mes)   %>%summarise(credito_disponivel= sum(credito_disponivel)) %>% mutate(saldo_acumulado = cumsum(credito_disponivel)),aes(x= dia_mes, y= saldo_acumulado )) + geom_line()
+p <- ggplot( 
+  saldos %>%
+  filter(ug_executora_codigo == ug_selecionada ) %>% 
+  group_by(dia_mes)  %>% 
+  summarise(credito_disponivel= sum(credito_disponivel)) %>% 
+  mutate(saldo_acumulado = cumsum(credito_disponivel)),
+        aes(x= dia_mes, y= saldo_acumulado ))+
+  geom_line()
 
 ggplotly(p)
 ```
 
 ```{r}
-saldos %>% filter(ug_executora_codigo == ug_selecionada ) %>% group_by(dia_mes) %>%summarise(across(where(is.numeric), sum))%>%mutate(across(where(is.numeric), cumsum, .names = "{col}_acumulado"),) %>% select(dia_mes, ends_with( "acumulado")) %>% kable(format.args = list(big.mark = ".", decimal.mark = ","))
+#| eval: false
+
+saldos %>% 
+  filter(ug_executora_codigo == ug_selecionada ) %>% 
+        group_by(dia_mes) %>%summarise(across(where(is.numeric), sum))%>%
+        mutate(across(where(is.numeric), cumsum,
+                            .names = "{col}_acumulado"),) %>%
+        select(dia_mes, ends_with( "acumulado")) %>%
+        kable(format.args = list(big.mark = ".", decimal.mark = ","))
 ```
 
 ```{r}
-saldos %>% filter(ug_executora_codigo == ug_selecionada ) %>% group_by(dia_mes) %>%summarise(across(where(is.numeric), sum))%>%mutate(across(where(is.numeric), cumsum, .names = "{col}_")) %>% select(dia_mes, ends_with( "_")) %>% pivot_longer(cols = ends_with( "_"), names_to = "item", values_to = "saldo")
+saldos %>%
+    filter(ug_executora_codigo == ug_selecionada ) %>%
+    group_by(dia_mes) %>%summarise(across(where(is.numeric), sum))%>%
+    mutate(across(where(is.numeric), cumsum, .names = "{col}_")) %>% 
+    select(dia_mes, ends_with( "_")) %>%
+    pivot_longer(cols = ends_with( "_"),
+                 names_to = "item", values_to = "saldo")
 
 
-saldos %>% filter(ug_executora_codigo == ug_selecionada ) %>% summarise(across(where(is.numeric), list(mínimo = min,max = max,soma = sum,média =mean),  na.rm = TRUE))%>% pivot_longer(cols = where(is.numeric), names_to = "item", values_to = "saldo")%>% kable(digits=1,format.args = list(big.mark = ".", decimal.mark = ","))
+saldos %>% 
+  filter(ug_executora_codigo == ug_selecionada ) %>%
+  summarise(across(where(is.numeric), 
+                   list(mínimo = min,max = max,
+                        soma = sum,média =mean),  na.rm = TRUE))%>%
+  pivot_longer(cols = where(is.numeric),
+               names_to = "item", values_to = "saldo")%>% 
+  kable(digits=1,format.args = list(big.mark = ".", decimal.mark = ","))
 
 
-p <- ggplot( saldos %>% filter(ug_executora_codigo == ug_selecionada ) %>% group_by(dia_mes) %>%summarise(across(where(is.numeric), sum))%>%mutate(across(where(is.numeric), cumsum, .names = "{col}_")) %>% select(dia_mes, ends_with( "_")) %>% pivot_longer(cols = ends_with( "_"), names_to = "item", values_to = "saldo"),aes(x= dia_mes, y= saldo , colour = item)) + geom_line()+facet_wrap(~item, ncol = 1)+ theme(legend.position="none")
+p <- ggplot( saldos %>%
+               filter(ug_executora_codigo == ug_selecionada ) %>%
+               group_by(dia_mes) %>%
+               summarise(across(where(is.numeric), sum))%>%
+               mutate(across(where(is.numeric),
+                             cumsum, .names = "{col}_")) %>%
+               select(dia_mes, ends_with( "_")) %>%
+               pivot_longer(cols = ends_with( "_"),
+                            names_to = "item", values_to = "saldo"),
+               aes(x= dia_mes, y= saldo , colour = item)) +
+               geom_line()+
+               facet_wrap(~item, ncol = 1)+ theme(legend.position="none")
 
 ggplotly( p)
 ```
