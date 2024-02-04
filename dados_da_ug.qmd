@@ -3,7 +3,7 @@ title: "Dados da UG"
 editor: visual
 lang: "pt"
 format:
-  # pdf: default
+  pdf: default
   html:
     code-fold: true
     code-summary: "mostrar o código"
@@ -14,7 +14,7 @@ execute:
   error: false
   cache: refresh
   freeze: auto
-  # echo: false
+  echo: false
 ---
 
 ```{r}
@@ -69,7 +69,7 @@ lista_ugs_gestor %>%
   pivot_longer( cols = everything()) %>% mutate(name = str_remove(name,"ug_"), name = str_remove(name,"executora"),name = str_remove(name,"uge"), name =str_to_upper(  str_replace_all(name,"_"," ")))%>% kable(col.names = c("Item", "Resultado"))
 ```
 
-### Relação dos responsáveis
+### Rol de responsáveis
 
 ```{r}
 lista_ugs_gestor %>%

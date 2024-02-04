@@ -3,7 +3,7 @@ title: "SIAFI"
 editor: visual
 lang: "pt"
 format:
-  # pdf: default
+  pdf: default
   html:
     code-fold: true
     code-summary: "mostrar o código"
@@ -85,7 +85,7 @@ O nosso universo de lançamentos contábeis tem apenas quatro tipos de favorecid
 
 1.  Unidade gestora (UG)
 
-2.   Pessoa jurídica (PJ)
+2.  Pessoa jurídica (PJ)
 
 3.  Pessoa física (PF)
 
@@ -135,7 +135,7 @@ A transação CONRAZAO permite ver os saldos atualizados. Ou seja, assim que um 
 
 ![](images/conrazao_nc_30_01.png){#fig-BALANCETE_02}
 
-### BALANCETE (D-1)
+### BALANCETE (D-1) {#sec-balancete}
 
 A transação BALANCETE traz os saldos do último dia de fechamento do SIAFI. Por exemplo, um documento emitido no dia 15/03 só aparecerá no BALANCETE a partir do dia 16/03.
 

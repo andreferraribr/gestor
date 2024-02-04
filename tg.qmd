@@ -3,7 +3,7 @@ title: "Tesouro Gerencial"
 editor: visual
 lang: "pt"
 format:
-  # pdf: default
+  pdf: default
   html:
     code-fold: true
     code-summary: "mostrar o código"
@@ -13,7 +13,7 @@ execute:
   message: false
   error: false
   freeze: false
-  # echo: false
+  echo: false
 ---
 
 ```{r}
@@ -69,11 +69,51 @@ ug_selecionada <-  170166
 
 ### 
 
-## Métricas
+## Métricas e intervalos temporais
 
-### Saldo
+As métricas devem estar associadas a um intervalo de lançamento. O Tesouro Gerencial disponibiliza três intervalos:
 
-### Movimento
+1.  dia
+
+2.  mês
+
+3.  ano
+
+Cada um desses intervalos está associado a uma data de lançamento contábil e a uma data da emissão do documento.
+
+### Diferença entre data de lançamento e data de emissão do documento
+
+Em praticamente todos os casos a data de lançamento é igual a data da emissão do documento. Contudo, em algumas circunstâncias especiais a data de lançamento difere da data da emissão do documento.
+
+![Data de lançamento diferente da data de emissão.](images/emissao_lancamento_nl_blumenau.png)
+
+*Você já emitiu um documento com data de emissão diferente da data de lançamento?*
+
+### Métricas R\$ (item informação): saldo x movimento (ano lançamento)
+
+![Métricas R\$ (item informação): saldo x movimento (ano lançamento)](images/saldo%20x%20movimento_ano.png)
+
+### Métricas R\$ (item informação): saldo x movimento (mês lançamento)
+
+![Métricas R\$ (item informação): saldo x movimento (mês lançamento)](images/saldo%20x%20movimento.png)
+
+### Métricas R\$ (item informação): saldo x movimento (emissão-dia)
+
+![Métricas R\$ item informação: saldo x movimento (emissão-dia)](images/saldo%20x%20movimento_emissao_dia.png)
+
+### Métricas (conta contábil) e (dia lançamento)
+
+![Métricas conta contábil (dia lançamento)](images/dial_lancamento_conta_contabil.png)
+
+### Quadro resumo métricas x intervalos temporais
+
+![Métrica x data](images/metrica%20x%20lancamento.png)
+
+Quais métricas e intevalos temporais podem ser utilizados para obter toda a despesa empenhada no ano de 2022?
+
+Quais métricas e intevalos temporais podem ser utilizados para obter a despesa empenhada no mês de setembro de 2022?
+
+Quais métricas e intevalos temporais podem ser utilizados para obter a despesa empenhada de janeiro de 2022 a setembro de 2022?
 
 ## Elementos derivados
 
@@ -85,19 +125,31 @@ ug_selecionada <-  170166
 
 [Link para o roteiro](https://docs.google.com/presentation/d/1vVAXferpO-VjXhebgqwIiXspDpGpP39Zt7vGR_2fuL8/edit#slide=id.p)
 
-![](/images/roteiro_tidy_data.png)
+![](/images/roteiro_tidy_data.png){width="15cm"}
 
 ## Pontos de atenção
 
-### Documentos e itens de informação
+### Documento NE e NECCor
 
-### Base de dados (D+1)
+Tanto a pasta xxxx quanto a pasta zzzz têm atributos relativos à nota de empenho. Via de regra é melhor utilizar os atributos da pasta ZZZZ.
+
+![](images/ne_neccor.png){width="15cm"}
+
+### Base de dados (D-1)
+
+O Tesouro Gerencial trabalha com os dados do último dia de fechamento do Siafi, da mesma forma que a transação BALANCETE @sec-balancete
 
 ### Códigos de exceção
 
-![](/images/codigo_excecao.png)
+O Tesouro Gerencial tem códigos de exceção, os principais são o -7, -8 e -9. Os códigos de exceção -7 e -8 são mais críticos, pois podem representar um problema na base de dados do Siafi, por exemplo, o lançamento incorreto/incosistente. JO código de exceção -9 , por sua vez, está relacionado à construção do relatório. Se o relatório solicita dotação inicial detalhada por favorecido do empenho, o TG vai retornar -9 para o atributo favorecido, pois a informação do favorecido só existe a partir do empenho da despesa.
+
+![](/images/codigo_excecao.png){width="15cm"}
+
+![](images/codigo_excecao_ne800586.png){width="15cm"}
 
 ### Valor Doc x métrica
+
+Tenha cuidado ao relacionar atributos da pasta de **documentos** com os demais atributos e as métricas do Tesouro Gerencial, pois os valores das métricas podem vir distorcidos. Além disso, alguns tipos de documentos como a NC não tem valor em "Doc - Valor", pois tal tipo de documento não tem um valor de face, mas somente valores nas linhas de evento.
 
 ## Vídeos
 

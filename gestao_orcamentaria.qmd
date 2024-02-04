@@ -3,7 +3,7 @@ title: "Gestão orçamentária"
 editor: visual
 lang: "pt"
 format:
-  # pdf: default
+  pdf: default
   html:
     code-fold: true
     code-summary: "mostrar o código"
@@ -14,7 +14,7 @@ execute:
   message: false
   error: false
   cache: refresh
-  # echo: false
+  echo: false
   freeze: auto
 ---
 
@@ -233,37 +233,135 @@ saldos %>%
 ```
 
 ```{r}
-saldos %>%
-    filter(ug_executora_codigo == ug_selecionada ) %>%
-    group_by(dia_mes) %>%summarise(across(where(is.numeric), sum))%>%
-    mutate(across(where(is.numeric), cumsum, .names = "{col}_")) %>% 
-    select(dia_mes, ends_with( "_")) %>%
-    pivot_longer(cols = ends_with( "_"),
-                 names_to = "item", values_to = "saldo")
+# saldos %>%
+#     filter(ug_executora_codigo == ug_selecionada ) %>%
+#     group_by(dia_mes) %>%summarise(across(where(is.numeric), sum))%>%
+#     mutate(across(where(is.numeric), cumsum, .names = "{col}_")) %>%
+#     select(dia_mes, ends_with( "_")) %>%
+#     pivot_longer(cols = ends_with( "_"),
+#                  names_to = "item", values_to = "saldo")
+# 
+# 
+# saldos %>% 
+#   filter(ug_executora_codigo == ug_selecionada ) %>%
+#   summarise(across(where(is.numeric), 
+#                    list(mínimo = min,max = max,
+#                         soma = sum,média =mean),  na.rm = TRUE))%>%
+#   pivot_longer(cols = where(is.numeric),
+#                names_to = "item", values_to = "saldo")%>% 
+#   kable(digits=1,format.args = list(big.mark = ".", decimal.mark = ","))
 
 
-saldos %>% 
-  filter(ug_executora_codigo == ug_selecionada ) %>%
-  summarise(across(where(is.numeric), 
-                   list(mínimo = min,max = max,
-                        soma = sum,média =mean),  na.rm = TRUE))%>%
-  pivot_longer(cols = where(is.numeric),
-               names_to = "item", values_to = "saldo")%>% 
-  kable(digits=1,format.args = list(big.mark = ".", decimal.mark = ","))
+# p <- ggplot( saldos %>%
+#                filter(ug_executora_codigo == ug_selecionada ) %>%
+#                group_by(dia_mes) %>%
+#                summarise(across(where(is.numeric), sum))%>%
+#                mutate(across(where(is.numeric),
+#                              cumsum, .names = "{col}_")) %>%
+#                select(dia_mes, credito_disponivel_) %>%
+#                pivot_longer(cols = credito_disponivel_,
+#                             names_to = "item", values_to = "saldo"),
+#                aes(x= dia_mes, y= saldo , colour = item)) +
+#                geom_line()+
+#                facet_wrap(~item, ncol = 1)+ theme(legend.position="none")
+# 
+# ggplotly( p)
+```
 
-
+```{r}
 p <- ggplot( saldos %>%
                filter(ug_executora_codigo == ug_selecionada ) %>%
                group_by(dia_mes) %>%
                summarise(across(where(is.numeric), sum))%>%
                mutate(across(where(is.numeric),
                              cumsum, .names = "{col}_")) %>%
-               select(dia_mes, ends_with( "_")) %>%
-               pivot_longer(cols = ends_with( "_"),
+               select(dia_mes, credito_disponivel_) %>%
+               pivot_longer(cols = credito_disponivel_,
+                            names_to = "item", values_to = "saldo"),
+               aes(x= dia_mes, y=  saldo , colour = item)) +
+               geom_line()+
+               facet_wrap(~item, ncol = 1)+ theme(legend.position="none")
+
+ggplotly( p)
+```
+
+```{r}
+p <- ggplot( saldos %>%
+               filter(ug_executora_codigo == ug_selecionada ) %>%
+               group_by(dia_mes) %>%
+               summarise(across(where(is.numeric), sum))%>%
+               mutate(across(where(is.numeric),
+                             cumsum, .names = "{col}_")) %>%
+               select(dia_mes, limite_de_saque_) %>%
+               pivot_longer(cols = limite_de_saque_,
                             names_to = "item", values_to = "saldo"),
                aes(x= dia_mes, y= saldo , colour = item)) +
                geom_line()+
                facet_wrap(~item, ncol = 1)+ theme(legend.position="none")
+
+ggplotly( p)
+```
+
+```{r}
+p <- ggplot( saldos %>%
+               filter(ug_executora_codigo == ug_selecionada ) %>%
+               group_by(dia_mes) %>%
+               summarise(across(where(is.numeric), sum))%>%
+               mutate(across(where(is.numeric),
+                             cumsum, .names = "{col}_")) %>%
+               select(dia_mes, limite_de_saque_, a_pagar_) %>%
+               pivot_longer(cols = c(limite_de_saque_, a_pagar_),
+                            names_to = "item", values_to = "saldo"),
+               aes(x= dia_mes, y= saldo , colour = item)) +
+               geom_line()
+
+ggplotly( p)
+```
+
+```{r}
+p <- ggplot( saldos %>%
+               filter(ug_executora_codigo == ug_selecionada ) %>%
+               group_by(dia_mes) %>%
+               summarise(across(where(is.numeric), sum))%>%
+               mutate(across(where(is.numeric),
+                             cumsum, .names = "{col}_")) %>%
+               select(dia_mes,  RP_a_pagar_) %>%
+               pivot_longer(cols = RP_a_pagar_,
+                            names_to = "item", values_to = "saldo"),
+               aes(x= dia_mes, y= saldo , colour = item)) +
+               geom_line()
+
+ggplotly( p)
+```
+
+```{r}
+p <- ggplot( saldos %>%
+               filter(ug_executora_codigo == ug_selecionada ) %>%
+               group_by(dia_mes) %>%
+               summarise(across(where(is.numeric), sum))%>%
+               mutate(across(where(is.numeric),
+                             cumsum, .names = "{col}_")) %>%
+               select(dia_mes,  a_liquidar_) %>%
+               pivot_longer(cols = c( a_liquidar_),
+                            names_to = "item", values_to = "saldo"),
+               aes(x= dia_mes, y= saldo , colour = item)) +
+               geom_line()
+
+ggplotly( p)
+```
+
+```{r}
+p <- ggplot( saldos %>%
+               filter(ug_executora_codigo == ug_selecionada ) %>%
+               group_by(dia_mes) %>%
+               summarise(across(where(is.numeric), sum))%>%
+               mutate(across(where(is.numeric),
+                             cumsum, .names = "{col}_")) %>%
+               select(dia_mes,  a_pagar_) %>%
+               pivot_longer(cols = c( a_pagar_),
+                            names_to = "item", values_to = "saldo"),
+               aes(x= dia_mes, y= saldo , colour = item)) +
+               geom_line()
 
 ggplotly( p)
 ```
