@@ -1,0 +1,33 @@
+---
+lang: "pt"
+---
+
+# Introdução {.unnumbered}
+
+Este é o material de apoio da "Oficina de Tesouro Gerencial para Gestores" e traz informações relevantes para os gestores públicos, dentre elas:
+
+1.  como os dados são registrados no SIAFI
+
+2.  as principais transações do SIAFI
+
+3.  como utilzar o Tesouro Gerencial para extrair dados do SIAFI
+
+4.  como obter uma visão panorâmica de uma determinada UG:
+
+    -   os responsávies pela UG
+
+    -   os detalhes sobre os documentos emitidos pela UG
+
+    -   o fluxo orçamentário e financeiro
+
+# Objetivos da oficina
+
+Após a oficina o aluno deve:
+
+1.  entender como os dados são registrados no SIAFI
+
+2.  conhecer as principais transações relacionadas à consulta de documentos, saldos e contas contábeis
+
+3.  ser capaz de criar relatórios, filtros, elementos derivas, grupos personalizados e subscrições no Tesouro Gerencial
+
+4.  ser capaz de criar relatórios relevantes para a sua UG.

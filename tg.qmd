@@ -3,7 +3,7 @@ title: "Tesouro Gerencial"
 editor: visual
 lang: "pt"
 format:
-  pdf: default
+  # pdf: default
   html:
     code-fold: true
     code-summary: "mostrar o código"
@@ -13,7 +13,7 @@ execute:
   message: false
   error: false
   freeze: false
-  echo: false
+  # echo: false
 ---
 
 ```{r}
@@ -55,29 +55,29 @@ ug_selecionada <-  170166
 
 ## Projetos
 
-### Consultas Gerenciais
-
-### Custos
+{{< video https://youtu.be/-7tUfdktxrI >}}
 
 ## Atributos
 
 ### Modelo dimensional
 
+{{< video https://youtu.be/-Sqx6LNZW0I >}}
+
 ### Item de Informação
 
-#### NE Ccor
+Os itens de informação são criados a partir de contas contábeis. Por exemplo, "Despesas Empenhadas" e "Despesas Empenhadas (Controle Empenho)" agrupam o saldo de quatro contas contábeis.
 
-### 
+![](images/item_conta_tipo_ccor.png)
+
+![](images/item_conta_tipo_ccor.png){#fig-contagem_docs}
+
+::: callout-important
+*Pesquise no SIAFI* (@fig-CONINDCONT) *o tipo de conta corrente 031 e o 076. Qual dos dois traz mais informações?*
+:::
 
 ## Métricas e intervalos temporais
 
-As métricas devem estar associadas a um intervalo de lançamento. O Tesouro Gerencial disponibiliza três intervalos:
-
-1.  dia
-
-2.  mês
-
-3.  ano
+As métricas devem estar associadas a um intervalo temporal. O Tesouro Gerencial disponibiliza três intervalos: 1) dia, 2) mês ou 3) ano.
 
 Cada um desses intervalos está associado a uma data de lançamento contábil e a uma data da emissão do documento.
 
@@ -85,9 +85,11 @@ Cada um desses intervalos está associado a uma data de lançamento contábil e 
 
 Em praticamente todos os casos a data de lançamento é igual a data da emissão do documento. Contudo, em algumas circunstâncias especiais a data de lançamento difere da data da emissão do documento.
 
-![Data de lançamento diferente da data de emissão.](images/emissao_lancamento_nl_blumenau.png)
+![Data de lançamento diferente da data de emissão.](images/emissao_lancamento_nl_blumenau.png){#fig-emissao_lancamento}
 
+::: callout-important
 *Você já emitiu um documento com data de emissão diferente da data de lançamento?*
+:::
 
 ### Métricas R\$ (item informação): saldo x movimento (ano lançamento)
 
@@ -109,18 +111,24 @@ Em praticamente todos os casos a data de lançamento é igual a data da emissão
 
 ![Métrica x data](images/metrica%20x%20lancamento.png)
 
+::: callout-important
 Quais métricas e intevalos temporais podem ser utilizados para obter toda a despesa empenhada no ano de 2022?
 
 Quais métricas e intevalos temporais podem ser utilizados para obter a despesa empenhada no mês de setembro de 2022?
 
 Quais métricas e intevalos temporais podem ser utilizados para obter a despesa empenhada de janeiro de 2022 a setembro de 2022?
+:::
 
 ## Elementos derivados
 
+{{< video https://youtu.be/yTy6VQK8YDg >}}
+
 ## Filtros
 
-## Grupos personalizados
+{{< video https://youtu.be/LdnfqmeiqUU >}}
 
+## Grupos personalizados
+{{< video https://youtu.be/6CMfAeX4ZHQ >}}
 ## Roteiro para tratamento e exportação dos dados
 
 [Link para o roteiro](https://docs.google.com/presentation/d/1vVAXferpO-VjXhebgqwIiXspDpGpP39Zt7vGR_2fuL8/edit#slide=id.p)
@@ -131,26 +139,22 @@ Quais métricas e intevalos temporais podem ser utilizados para obter a despesa 
 
 ### Documento NE e NECCor
 
-Tanto a pasta xxxx quanto a pasta zzzz têm atributos relativos à nota de empenho. Via de regra é melhor utilizar os atributos da pasta ZZZZ.
+Tanto a pasta *Nota de Empenho* quanto a pasta *Informações da Nota de Empenho* têm atributos relativos à nota de empenho. Opte pelos atributos da pasta *Informações da Nota de Empenho.*, caso elabore relatórios contendo itens de informação e as metricas de movimento.
 
-![](images/ne_neccor.png){width="15cm"}
+![](images/ne_neccor.png){#fig-ne_neccor width="15cm"}
 
 ### Base de dados (D-1)
 
 O Tesouro Gerencial trabalha com os dados do último dia de fechamento do Siafi, da mesma forma que a transação BALANCETE @sec-balancete
 
+{{< video https://youtu.be/M7BT0whzSNc >}}
+
 ### Códigos de exceção
 
-O Tesouro Gerencial tem códigos de exceção, os principais são o -7, -8 e -9. Os códigos de exceção -7 e -8 são mais críticos, pois podem representar um problema na base de dados do Siafi, por exemplo, o lançamento incorreto/incosistente. JO código de exceção -9 , por sua vez, está relacionado à construção do relatório. Se o relatório solicita dotação inicial detalhada por favorecido do empenho, o TG vai retornar -9 para o atributo favorecido, pois a informação do favorecido só existe a partir do empenho da despesa.
+O Tesouro Gerencial tem códigos de exceção, os principais são o -7 (código inválido), -8 (sem informação) e -9 (não se aplica). Os códigos de exceção -7 e -8 são mais críticos, pois podem representar um problema na base de dados do Siafi, por exemplo, um lançamento incorreto/incosistente. Já o código de exceção -9 , por sua vez, está relacionado à construção do relatório. Se o relatório solicita a dotação inicial detalhada por favorecido do empenho, o TG vai retornar -9 para o atributo favorecido, pois a informação do favorecido só existe a partir do empenho da despesa.
 
 ![](/images/codigo_excecao.png){width="15cm"}
-
-![](images/codigo_excecao_ne800586.png){width="15cm"}
 
 ### Valor Doc x métrica
 
 Tenha cuidado ao relacionar atributos da pasta de **documentos** com os demais atributos e as métricas do Tesouro Gerencial, pois os valores das métricas podem vir distorcidos. Além disso, alguns tipos de documentos como a NC não tem valor em "Doc - Valor", pois tal tipo de documento não tem um valor de face, mas somente valores nas linhas de evento.
-
-## Vídeos
-
-{{< video https://www.youtube.com/watch?v=_P88liyyk0c >}}

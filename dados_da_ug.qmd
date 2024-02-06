@@ -3,7 +3,7 @@ title: "Dados da UG"
 editor: visual
 lang: "pt"
 format:
-  pdf: default
+  # pdf: default
   html:
     code-fold: true
     code-summary: "mostrar o código"
@@ -14,7 +14,7 @@ execute:
   error: false
   cache: refresh
   freeze: auto
-  echo: false
+  # echo: false
 ---
 
 ```{r}

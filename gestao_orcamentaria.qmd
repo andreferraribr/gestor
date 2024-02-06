@@ -3,7 +3,7 @@ title: "Gestão orçamentária"
 editor: visual
 lang: "pt"
 format:
-  pdf: default
+  # pdf: default
   html:
     code-fold: true
     code-summary: "mostrar o código"
@@ -14,7 +14,7 @@ execute:
   message: false
   error: false
   cache: refresh
-  echo: false
+  # echo: false
   freeze: auto
 ---
 

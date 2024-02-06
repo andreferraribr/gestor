@@ -3,7 +3,8 @@ title: "SIAFI"
 editor: visual
 lang: "pt"
 format:
-  pdf: default
+  # docx: default
+  # pdf: default
   html:
     code-fold: true
     code-summary: "mostrar o código"
@@ -13,7 +14,7 @@ execute:
   message: false
   error: false
   freeze: auto
-  echo: false
+  # echo: false
 ---
 
 ```{r}
@@ -59,13 +60,15 @@ ug_selecionada <-  170166
 
 Todo lançamento contábil inicia-se com a emissão de um documento.
 
-Em 2023, foram emitidos xxx documentos, sendo xxx ordens bancárias.
+Em 2023, foram emitidos quase 37 milhões de documentos, dos quais, 7,4 milhões foram ordens bancárias.
 
-![](images/contagem_docs.png)
+![](images/contagem_docs.png){#fig-contagem_docs}
 
+::: callout-important
 *Quais documentos você já emitiu?*
 
 *Você tem algum relato interessante/curioso sobre emissão de documento? Qual?*
+:::
 
 ### Emitente UG (quem)
 
@@ -73,11 +76,13 @@ Toda a execução do SIAFI ocorre no nível das Unidades Gestoras (UG). Quando o
 
 ![LOA 2024: detalhamento orçamentário do TRE-ES](images/loa_detalhamento_acao_tre_es.png){#fig-detalhamento_LOA_UO}
 
+::: callout-important
 *Quais documentos a sua UG emite?*
 
 *Qual é o principal documento emitido pela sua UG?*
 
 *Somente a sua UG pode emitir documentos lançando saldo na sua UG?*
+:::
 
 ### Favorecido DOC (quem)
 
@@ -93,17 +98,21 @@ O nosso universo de lançamentos contábeis tem apenas quatro tipos de favorecid
 
 ![Tipo de documento e tipo de favorecido.](images/tipo_doc.png){#fig-tipo_favorecido width="705"}
 
+::: callout-important
 *Quais são os principais favorecidos da sua UG?*
 
 Você já emitiu algum documento para IC?
 
 *A sua UG é a favorecida de algum documento? Quais?*
+:::
 
 ### Conta contábil (o que/onde)
 
 O CONCONTA traz detalhes da conta contábil. O atributo Conta Corrente é essencial para detalharmos a execução da despesa.
 
+::: callout-important
 *Em quais contas contábeis você costuma fazer lançamentos?*
+:::
 
 ![](images/conconta.png){#fig-CONCONTA}
 
@@ -111,17 +120,23 @@ O CONCONTA traz detalhes da conta contábil. O atributo Conta Corrente é essenc
 
 A CONINDCONT retorna o detalhamento do Conta Corrente (CCor). No caso do CCor 080, o SIAFI registra a estrutura da célula da despesa. Os atributos UGR e PI são opcionais (os órgãos definem se utilizarão ou não estes atributos).
 
+::: callout-important
 *Quando você faz lançamentos contábeis, quais tipos de Contas Correntes são sensibilizados?*
+:::
 
 ![](images/conindcont.png){#fig-CONINDCONT}
 
 ### Emissão dia (quando)
 
+::: callout-important
 *Quais são os dias/períodos com mais emissão de documentos?*
+:::
 
 ### Doc valor (quanto)
 
+::: callout-important
 *Qual foi o maior valor lançado por você?*
+:::
 
 ![](images/ob_codiv.png){#fig-CONDOC}
 
@@ -131,18 +146,16 @@ A CONINDCONT retorna o detalhamento do Conta Corrente (CCor). No caso do CCor 08
 
 A transação CONRAZAO permite ver os saldos atualizados. Ou seja, assim que um documento é emitido e o saldo registado, a CONRAZAO identifica o lançamento.
 
-![](images/conrazao.png){#fig-BALANCETE_01}
-
-![](images/conrazao_nc_30_01.png){#fig-BALANCETE_02}
+![](images/conrazao_codiv.png){#fig-CONRAZAO}
 
 ### BALANCETE (D-1) {#sec-balancete}
 
 A transação BALANCETE traz os saldos do último dia de fechamento do SIAFI. Por exemplo, um documento emitido no dia 15/03 só aparecerá no BALANCETE a partir do dia 16/03.
 
-![](images/balancete.png){#fig-BALANCETE}
+![](images/balancete_codiv.png){#fig-BALANCETE}
 
 ### CONOR (D-1)
 
 Os saldo capturados pela CONOR seguem o mesmo padrão do BALANCETE, sendo assim, a CONOR retorna os saldos do último dia do fechamento so SIAFI.
 
-### 
+![](images/conor_codiv.png){#fig-CONOR}
