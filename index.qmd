@@ -31,3 +31,16 @@ Após a oficina o aluno deve:
 3.  ser capaz de criar relatórios, filtros, elementos derivas, grupos personalizados e subscrições no Tesouro Gerencial
 
 4.  ser capaz de criar relatórios relevantes para a sua UG.
+
+```{r}
+#| warning: false
+#| message: false
+#| error: false
+#| echo: false
+library(readr)
+
+ug_selecionada <- "240252"
+ug_df <-data.frame( ug_selecionada)
+
+write_csv (ug_df,"ug_selecionada.csv")
+```

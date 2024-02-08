@@ -14,7 +14,7 @@ execute:
   message: false
   error: false
   cache: refresh
-  # echo: false
+  echo: false
   freeze: auto
 ---
 
@@ -38,6 +38,7 @@ library(data.table)
 library(DT)
 library(plotly)
 library(readr)
+library(scales)
 ```
 
 ```{r}
@@ -47,13 +48,12 @@ library(readr)
 myNumFmt <- as.fmt(digits=0, big.mark=".")
 
 options(scipen = 999)
+
 ```
 
 ```{r}
 lista_ugs_gestor <- read_excel("lista_ugs_gestor.xlsx") %>% clean_names()
 ```
-
-### ug_selecionada
 
 ```{r}
 # ug_selecionada <-  "070015"
@@ -63,9 +63,13 @@ ug_selecionada <- read_csv("ug_selecionada.csv") $ug_selecionada
 
 ## Quem executa o orçamento x Quem é o "dono" do orçamento
 
-### Visão UO (unidade orçamentária)
+### Visão UO (unidade orçamentária - dono do orçamento)
 
-### Visão UGE (unidade gestora)
+![](images/visao_uo.png)
+
+### Visão UGE (unidade gestora - executor do orçamento)
+
+![](images/visao_uge.png)
 
 ## Fluxo orçamentário
 
@@ -162,24 +166,6 @@ ug_nd %>% group_by(documento,conta_corrente) %>%
           head() %>% kable()
 ```
 
-## Fluxo financeiro
-
-### Movimentação financeira
-
-### Limite de saque
-
-### Provisão
-
-### Fases da execução da despesa
-
-### Empenho
-
-### Liquidação
-
-### Pagamento
-
-### Restos a pagar
-
 ## Pontos de controle
 
 ```{r}
@@ -199,25 +185,25 @@ saldos[is.na(saldos)] <- 0
 ```
 
 ```{r}
- saldos %>% filter(ug_executora_codigo == ug_selecionada, dia_mes < "2023-01-31" ) %>%
-            group_by(dia_mes)  %>%
-            summarise(credito_disponivel= sum(credito_disponivel)) %>% 
-            mutate(saldo_acumulado = cumsum(credito_disponivel),
-                   dia_mes = format(dia_mes, "%d-%b" )) %>%
-            kable(format.args = list(big.mark = ".", decimal.mark = ","))
+ # saldos %>% filter(ug_executora_codigo == ug_selecionada, dia_mes < "2023-01-31" ) %>%
+ #            group_by(dia_mes)  %>%
+ #            summarise(credito_disponivel= sum(credito_disponivel)) %>% 
+ #            mutate(saldo_acumulado = cumsum(credito_disponivel),
+ #                   dia_mes = format(dia_mes, "%d-%b" )) %>%
+ #            kable(col.names = c("data","movimento","saldo"), format.args = list(big.mark = ".", decimal.mark = ","))
 ```
 
 ```{r}
-p <- ggplot( 
-  saldos %>%
-  filter(ug_executora_codigo == ug_selecionada ) %>% 
-  group_by(dia_mes)  %>% 
-  summarise(credito_disponivel= sum(credito_disponivel)) %>% 
-  mutate(saldo_acumulado = cumsum(credito_disponivel)),
-        aes(x= dia_mes, y= saldo_acumulado ))+
-  geom_line()
-
-ggplotly(p)
+# p <- ggplot( 
+#   saldos %>%
+#   filter(ug_executora_codigo == ug_selecionada ) %>% 
+#   group_by(dia_mes)  %>% 
+#   summarise(credito_disponivel= sum(credito_disponivel)) %>% 
+#   mutate(saldo_acumulado = cumsum(credito_disponivel)),
+#         aes(x= dia_mes, y= saldo_acumulado ))+
+#   geom_line()
+# 
+# ggplotly(p)
 ```
 
 ```{r}
@@ -236,7 +222,7 @@ saldos %>%
 # saldos %>%
 #     filter(ug_executora_codigo == ug_selecionada ) %>%
 #     group_by(dia_mes) %>%summarise(across(where(is.numeric), sum))%>%
-#     mutate(across(where(is.numeric), cumsum, .names = "{col}_")) %>%
+#     mutate(across(where(is.numeric), cumsum)) %>%
 #     select(dia_mes, ends_with( "_")) %>%
 #     pivot_longer(cols = ends_with( "_"),
 #                  names_to = "item", values_to = "saldo")
@@ -257,7 +243,7 @@ saldos %>%
 #                group_by(dia_mes) %>%
 #                summarise(across(where(is.numeric), sum))%>%
 #                mutate(across(where(is.numeric),
-#                              cumsum, .names = "{col}_")) %>%
+#                              cumsum)) %>%
 #                select(dia_mes, credito_disponivel_) %>%
 #                pivot_longer(cols = credito_disponivel_,
 #                             names_to = "item", values_to = "saldo"),
@@ -274,13 +260,14 @@ p <- ggplot( saldos %>%
                group_by(dia_mes) %>%
                summarise(across(where(is.numeric), sum))%>%
                mutate(across(where(is.numeric),
-                             cumsum, .names = "{col}_")) %>%
-               select(dia_mes, credito_disponivel_) %>%
-               pivot_longer(cols = credito_disponivel_,
-                            names_to = "item", values_to = "saldo"),
-               aes(x= dia_mes, y=  saldo , colour = item)) +
+                             cumsum)) %>%
+               select(dia_mes, credito_disponivel) %>%
+               pivot_longer(cols = credito_disponivel,
+                            names_to = "item", values_to = "saldo") ,
+               aes(x= dia_mes, y=  round(saldo) , label= Format(saldo, fmt = myNumFmt))) +
                geom_line()+
-               facet_wrap(~item, ncol = 1)+ theme(legend.position="none")
+               facet_wrap(~item, ncol = 1)+ theme(legend.position="none",axis.title.x = element_blank())+
+  ylab("saldo (R$)")+scale_y_continuous(labels = label_number(prefix = "R$", big.mark = "."))
 
 ggplotly( p)
 ```
@@ -291,13 +278,49 @@ p <- ggplot( saldos %>%
                group_by(dia_mes) %>%
                summarise(across(where(is.numeric), sum))%>%
                mutate(across(where(is.numeric),
-                             cumsum, .names = "{col}_")) %>%
-               select(dia_mes, limite_de_saque_) %>%
-               pivot_longer(cols = limite_de_saque_,
+                             cumsum)) %>%
+               select(dia_mes, limite_de_saque) %>%
+               pivot_longer(cols = limite_de_saque,
+                            names_to = "item", values_to = "saldo"),
+               aes(x= dia_mes, y= round(saldo) , colour = item)) +
+               geom_line()+
+               facet_wrap(~item, ncol = 1)+ theme(legend.position="none",axis.title.x = element_blank())+
+  ylab("saldo (R$)")+scale_y_continuous(labels = label_currency())+
+  ylim(0, NA)
+
+ggplotly( p)
+```
+
+```{r}
+# p <- ggplot( saldos %>%
+#                filter(ug_executora_codigo == ug_selecionada ) %>%
+#                group_by(dia_mes) %>%
+#                summarise(across(where(is.numeric), sum))%>%
+#                mutate(across(where(is.numeric),
+#                              cumsum)) %>%
+#                select(dia_mes, limite_de_saque_, a_pagar_) %>%
+#                pivot_longer(cols = c(limite_de_saque_, a_pagar_),
+#                             names_to = "item", values_to = "saldo"),
+#                aes(x= dia_mes, y= saldo , colour = item)) +
+#                geom_line()
+# 
+# ggplotly( p)
+```
+
+```{r}
+p <- ggplot( saldos %>%
+               filter(ug_executora_codigo == ug_selecionada ) %>%
+               group_by(dia_mes) %>%
+               summarise(across(where(is.numeric), sum))%>%
+               mutate(across(where(is.numeric),
+                             cumsum)) %>%
+               select(dia_mes,  a_liquidar) %>%
+               pivot_longer(cols = c( a_liquidar),
                             names_to = "item", values_to = "saldo"),
                aes(x= dia_mes, y= saldo , colour = item)) +
                geom_line()+
-               facet_wrap(~item, ncol = 1)+ theme(legend.position="none")
+               facet_wrap(~item, ncol = 1)+ theme(legend.position="none",axis.title.x = element_blank())+
+  ylab("saldo (R$)")
 
 ggplotly( p)
 ```
@@ -308,60 +331,174 @@ p <- ggplot( saldos %>%
                group_by(dia_mes) %>%
                summarise(across(where(is.numeric), sum))%>%
                mutate(across(where(is.numeric),
-                             cumsum, .names = "{col}_")) %>%
-               select(dia_mes, limite_de_saque_, a_pagar_) %>%
-               pivot_longer(cols = c(limite_de_saque_, a_pagar_),
+                             cumsum)) %>%
+               select(dia_mes,  a_pagar) %>%
+               pivot_longer(cols = c( a_pagar),
                             names_to = "item", values_to = "saldo"),
                aes(x= dia_mes, y= saldo , colour = item)) +
-               geom_line()
+               geom_line()+
+               facet_wrap(~item, ncol = 1)+ theme(legend.position="none",axis.title.x = element_blank())+
+  ylab("saldo (R$)")
 
 ggplotly( p)
 ```
 
 ```{r}
-p <- ggplot( saldos %>%
-               filter(ug_executora_codigo == ug_selecionada ) %>%
-               group_by(dia_mes) %>%
-               summarise(across(where(is.numeric), sum))%>%
-               mutate(across(where(is.numeric),
-                             cumsum, .names = "{col}_")) %>%
-               select(dia_mes,  RP_a_pagar_) %>%
-               pivot_longer(cols = RP_a_pagar_,
-                            names_to = "item", values_to = "saldo"),
-               aes(x= dia_mes, y= saldo , colour = item)) +
-               geom_line()
-
-ggplotly( p)
+# p <- ggplot( saldos %>%
+#                filter(ug_executora_codigo == ug_selecionada ) %>%
+#                group_by(dia_mes) %>%
+#                summarise(across(where(is.numeric), sum))%>%
+#                mutate(across(where(is.numeric),
+#                              cumsum)) %>%
+#                select(dia_mes, credito_disponivel) %>%
+#                pivot_longer(cols = credito_disponivel,
+#                             names_to = "item", values_to = "saldo"),
+#                aes(x= dia_mes, y=  saldo , colour = item)) +
+#                geom_line()+
+#                facet_wrap(~item, ncol = 1)+ theme(legend.position="none",axis.title.x = element_blank())+
+#   ylab("saldo (R$)")
+# 
+# ggplotly( p)
 ```
 
 ```{r}
-p <- ggplot( saldos %>%
-               filter(ug_executora_codigo == ug_selecionada ) %>%
-               group_by(dia_mes) %>%
-               summarise(across(where(is.numeric), sum))%>%
-               mutate(across(where(is.numeric),
-                             cumsum, .names = "{col}_")) %>%
-               select(dia_mes,  a_liquidar_) %>%
-               pivot_longer(cols = c( a_liquidar_),
-                            names_to = "item", values_to = "saldo"),
-               aes(x= dia_mes, y= saldo , colour = item)) +
-               geom_line()
+label_currency <- function(accuracy = NULL, scale = 1, prefix = "R$",
+                           suffix = "", big.mark = ".", decimal.mark = ",",
+                           trim = TRUE, largest_with_fractional = 100000,
+                           ...) {
+  force_all(
+    accuracy,
+    scale,
+    prefix,
+    suffix,
+    big.mark,
+    decimal.mark,
+    trim,
+    largest_with_fractional,
+    ...
+  )
+  function(x) {
+    dollar(
+      x,
+      accuracy = accuracy,
+      scale = scale,
+      prefix = prefix,
+      suffix = suffix,
+      big.mark = big.mark,
+      decimal.mark = decimal.mark,
+      trim = trim,
+      largest_with_cents = largest_with_fractional,
+      ...
+    )
+  }
+}
 
-ggplotly( p)
-```
+needs_cents <- function(x, threshold) {
+  if (all(is.na(x))) {
+    return(FALSE)
+  }
 
-```{r}
-p <- ggplot( saldos %>%
-               filter(ug_executora_codigo == ug_selecionada ) %>%
-               group_by(dia_mes) %>%
-               summarise(across(where(is.numeric), sum))%>%
-               mutate(across(where(is.numeric),
-                             cumsum, .names = "{col}_")) %>%
-               select(dia_mes,  a_pagar_) %>%
-               pivot_longer(cols = c( a_pagar_),
-                            names_to = "item", values_to = "saldo"),
-               aes(x= dia_mes, y= saldo , colour = item)) +
-               geom_line()
+  if (max(abs(x), na.rm = TRUE) > threshold) {
+    return(FALSE)
+  }
 
-ggplotly( p)
+  !all(x == floor(x), na.rm = TRUE)
+}
+
+#' Superseded interface to `label_currency()`
+#'
+#' @description
+#' `r lifecycle::badge("superseded")`
+#'
+#' These functions are kept for backward compatibility; you should switch
+#' to [label_currency()] for new code.
+#'
+#' @keywords internal
+#' @export
+#' @inheritParams label_currency
+#' @param largest_with_cents Like `largest_with_fractional()` in
+#'   [label_currency()]
+#' @param negative_parens `r lifecycle::badge("deprecated")` Use
+#'   `style_negative = "parens"` instead.
+dollar_format <- function(accuracy = NULL, scale = 1, prefix = "R$",
+                          suffix = "", big.mark = ".", decimal.mark = ",",
+                          trim = TRUE, largest_with_cents = 100000,
+                          negative_parens = deprecated(),
+                          ...) {
+  force_all(
+    accuracy,
+    scale,
+    prefix,
+    suffix,
+    big.mark,
+    decimal.mark,
+    trim,
+    largest_with_cents,
+    negative_parens,
+    ...
+  )
+  function(x) {
+    dollar(
+      x,
+      accuracy = accuracy,
+      scale = scale,
+      prefix = prefix,
+      suffix = suffix,
+      big.mark = big.mark,
+      decimal.mark = decimal.mark,
+      trim = trim,
+      largest_with_cents = largest_with_cents,
+      negative_parens = negative_parens,
+      ...
+    )
+  }
+}
+
+
+#' @export
+#' @rdname dollar_format
+#' @param x A numeric vector
+dollar <- function(x, accuracy = NULL, scale = 1, prefix = "R$",
+                   suffix = "", big.mark = ".", decimal.mark = ",",
+                   trim = TRUE, largest_with_cents = 100000,
+                   negative_parens = deprecated(),
+                   style_negative = c("hyphen", "minus", "parens"),
+                   scale_cut = NULL,
+                   ...) {
+  if (length(x) == 0) {
+    return(character())
+  }
+  if (is.null(accuracy) && is.null(scale_cut)) {
+    if (needs_cents(x * scale, largest_with_cents)) {
+      accuracy <- .01
+    } else {
+      accuracy <- 1
+    }
+  }
+  if (identical(big.mark, ",") & identical(decimal.mark, ",")) {
+    big.mark <- " "
+  }
+
+  if (lifecycle::is_present(negative_parens)) {
+    lifecycle::deprecate_stop("1.2.0", "dollar(negative_parens)", "dollar(style_negative)")
+  }
+
+  number(
+    x,
+    accuracy = accuracy,
+    scale = scale,
+    prefix = prefix,
+    suffix = suffix,
+    big.mark = big.mark,
+    decimal.mark = decimal.mark,
+    trim = trim,
+    style_negative = style_negative,
+    scale_cut = scale_cut,
+    ...
+  )
+}
+
+#' @export
+#' @rdname dollar_format
+label_dollar <- dollar_format
 ```

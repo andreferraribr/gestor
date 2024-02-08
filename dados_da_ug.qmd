@@ -14,7 +14,7 @@ execute:
   error: false
   cache: refresh
   freeze: auto
-  # echo: false
+  echo: false
 ---
 
 ```{r}
@@ -57,9 +57,7 @@ lista_ugs_gestor <- read_excel("lista_ugs_gestor.xlsx") %>% clean_names()
 ug_selecionada <- read_csv("ug_selecionada.csv")$ug_selecionada
 ```
 
-## Dados da UG
-
-### Nome e local
+## Nome e local
 
 ```{r}
 lista_ugs_gestor %>% 
@@ -69,7 +67,7 @@ lista_ugs_gestor %>%
   pivot_longer( cols = everything()) %>% mutate(name = str_remove(name,"ug_"), name = str_remove(name,"executora"),name = str_remove(name,"uge"), name =str_to_upper(  str_replace_all(name,"_"," ")))%>% kable(col.names = c("Item", "Resultado"))
 ```
 
-### Rol de responsáveis
+## Rol de responsáveis
 
 ```{r}
 lista_ugs_gestor %>%
@@ -95,7 +93,7 @@ lista_ugs_gestor %>%
   kable(col.names =c( "Atribuição","Responsáveis"))
 ```
 
-### Hierarquia organizacional
+## Hierarquia organizacional
 
 ```{r}
 lista_ugs_gestor %>% 
@@ -111,7 +109,7 @@ lista_ugs_gestor %>%
           name =str_to_upper(  str_replace_all(name,"_"," "))) %>% kable(col.names = c("Item","Resultado"))
 ```
 
-### Opções sobre a execução orçamentária e centro de custos
+## Opções sobre a execução orçamentária e centro de custos
 
 ```{r}
 lista_ugs_gestor %>% filter(ug_executora_codigo == ug_selecionada) %>%

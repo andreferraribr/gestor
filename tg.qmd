@@ -13,7 +13,7 @@ execute:
   message: false
   error: false
   freeze: false
-  # echo: false
+  echo: false
 ---
 
 ```{r}
@@ -68,8 +68,6 @@ ug_selecionada <-  170166
 Os itens de informação são criados a partir de contas contábeis. Por exemplo, "Despesas Empenhadas" e "Despesas Empenhadas (Controle Empenho)" agrupam o saldo de quatro contas contábeis.
 
 ![](images/item_conta_tipo_ccor.png)
-
-![](images/item_conta_tipo_ccor.png){#fig-contagem_docs}
 
 ::: callout-important
 *Pesquise no SIAFI* (@fig-CONINDCONT) *o tipo de conta corrente 031 e o 076. Qual dos dois traz mais informações?*
@@ -128,7 +126,9 @@ Quais métricas e intevalos temporais podem ser utilizados para obter a despesa 
 {{< video https://youtu.be/LdnfqmeiqUU >}}
 
 ## Grupos personalizados
+
 {{< video https://youtu.be/6CMfAeX4ZHQ >}}
+
 ## Roteiro para tratamento e exportação dos dados
 
 [Link para o roteiro](https://docs.google.com/presentation/d/1vVAXferpO-VjXhebgqwIiXspDpGpP39Zt7vGR_2fuL8/edit#slide=id.p)
@@ -151,10 +151,10 @@ O Tesouro Gerencial trabalha com os dados do último dia de fechamento do Siafi,
 
 ### Códigos de exceção
 
-O Tesouro Gerencial tem códigos de exceção, os principais são o -7 (código inválido), -8 (sem informação) e -9 (não se aplica). Os códigos de exceção -7 e -8 são mais críticos, pois podem representar um problema na base de dados do Siafi, por exemplo, um lançamento incorreto/incosistente. Já o código de exceção -9 , por sua vez, está relacionado à construção do relatório. Se o relatório solicita a dotação inicial detalhada por favorecido do empenho, o TG vai retornar -9 para o atributo favorecido, pois a informação do favorecido só existe a partir do empenho da despesa.
+O Tesouro Gerencial tem códigos de exceção, os principais são o -7 (código inválido), -8 (sem informação) e -9 (não se aplica). Os códigos de exceção -7 e -8 são mais críticos, pois podem representar um problema na base de dados do Siafi, por exemplo, um lançamento incorreto/incosistente. Já o código de exceção -9, por sua vez, está relacionado à construção do relatório. Se o relatório solicita a dotação inicial detalhada por favorecido do empenho, o TG vai retornar -9 para o atributo favorecido, pois a informação do favorecido só existe a partir do empenho da despesa.
 
 ![](/images/codigo_excecao.png){width="15cm"}
 
 ### Valor Doc x métrica
 
-Tenha cuidado ao relacionar atributos da pasta de **documentos** com os demais atributos e as métricas do Tesouro Gerencial, pois os valores das métricas podem vir distorcidos. Além disso, alguns tipos de documentos como a NC não tem valor em "Doc - Valor", pois tal tipo de documento não tem um valor de face, mas somente valores nas linhas de evento.
+Tenha cuidado ao relacionar atributos da pasta de **documentos** com os demais atributos e as métricas do Tesouro Gerencial, pois os valores das métricas podem vir distorcidos. Além disso, alguns tipos de documentos, como a NC, não têm valor em "Doc - Valor", pois tal tipo de documento não tem um valor de face, mas somente valores nas linhas de evento.

@@ -14,7 +14,7 @@ execute:
   error: false
   cache: refresh
   freeze: auto
-  # echo: false
+  echo: false
 ---
 
 ```{r}
@@ -62,16 +62,14 @@ docs_ug <- read_excel(paste0("docs_ug_",ug_selecionada,".xlsx")) %>%
             clean_names()
 ```
 
-## Documentos emitidos
-
-### Quantitativo por tipo de documento
+## Quantitativo por tipo de documento
 
 ```{r}
 docs_ug %>% group_by(doc_tipo_nome) %>% count() %>% arrange(desc(n)) %>%
             kable(col.names = c("Tipo de documento","Quantidade") ,digits = 0, format.args = list(big.mark = ".", decimal.mark = ","))
 ```
 
-### Qual operador emitiu o documento
+## Qual operador emitiu o documento
 
 ```{r}
 docs_ug %>% group_by(doc_lancado_por_nome ) %>% 
@@ -88,44 +86,44 @@ docs_ug %>% group_by(doc_tipo_codigo,doc_lancado_por_nome  ) %>%
   count()  %>% kable(digits = 0, format.args = list(big.mark = ".", decimal.mark = ","))
 ```
 
-### Tipo de favorecido: quantitativo
+## Tipo de favorecido: quantitativo
 
 ```{r}
 docs_ug %>% group_by(favorecido_tipo_nome ) %>% count() %>%
             arrange(desc(n)) %>% head(20) %>% kable(col.names = c("Tipo de favorecido","Quantidade") ,digits = 0, format.args = list(big.mark = ".", decimal.mark = ","))
 ```
 
-### Principais UGs favorecidas
+## Principais UGs favorecidas
 
 ```{r}
 docs_ug %>% filter(favorecido_tipo_nome == "UNIDADE GESTORA") %>%
             group_by(favorecido_doc_nome ) %>% count() %>%
-            arrange(desc(n)) %>% head(20)%>% kable(col.names = c("Favorecido","Quantidade") ,digits = 0, format.args = list(big.mark = ".", decimal.mark = ","))
+            arrange(desc(n)) %>% head(10)%>% kable(col.names = c("Favorecido","Quantidade") ,digits = 0, format.args = list(big.mark = ".", decimal.mark = ","))
 ```
 
-### Favorecidos e tipos de documentos
+## Favorecidos e tipos de documentos
 
 ```{r}
 docs_ug %>% filter(doc_tipo_codigo != "NS") %>%
             group_by( favorecido_doc_nome, doc_tipo_codigo ) %>%
-            count() %>% arrange(desc(n)) %>% head(20) %>% kable(col.names = c("Favorecido", "Tipo de documento","Quantidade") ,digits = 0, format.args = list(big.mark = ".", decimal.mark = ","))
+            count() %>% arrange(desc(n)) %>% head() %>% kable(col.names = c("Favorecido", "Tipo de documento","Quantidade") ,digits = 0, format.args = list(big.mark = ".", decimal.mark = ","))
 ```
 
-### Sistema de origem
+## Sistema de origem
 
 ```{r}
 docs_ug %>% group_by(doc_sistema_origem ) %>%
             count() %>% arrange(desc(n)) %>% kable(col.names = c("Sistema de origem","Quantidade") ,digits = 0, format.args = list(big.mark = ".", decimal.mark = ","))
 ```
 
-### Data de lançamento do documento
+## Data de lançamento do documento
 
 ```{r}
 docs_ug %>% group_by(doc_lancado_por_data_acesso ) %>%
             count() %>% arrange(desc(n)) %>% head(10)%>% kable(col.names = c("Data de lançamento","Quantidade") ,digits = 0, format.args = list(big.mark = ".", decimal.mark = ","))
 ```
 
-### Documentos emitidos no dia `r (docs_ug %>% group_by(doc_lancado_por_data_acesso ) %>% count() %>% arrange(desc(n)))[1,1]`
+## Documentos emitidos no dia `r (docs_ug %>% group_by(doc_lancado_por_data_acesso ) %>% count() %>% arrange(desc(n)))[1,1]`
 
 ```{r}
 docs_ug %>%

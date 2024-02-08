@@ -3,7 +3,7 @@ title: "SIAFI"
 editor: visual
 lang: "pt"
 format:
-  # docx: default
+  docx: default
   # pdf: default
   html:
     code-fold: true
@@ -14,7 +14,7 @@ execute:
   message: false
   error: false
   freeze: auto
-  # echo: false
+  echo: false
 ---
 
 ```{r}
@@ -110,21 +110,24 @@ Você já emitiu algum documento para IC?
 
 O CONCONTA traz detalhes da conta contábil. O atributo Conta Corrente é essencial para detalharmos a execução da despesa.
 
+
+
+![](images/conconta.png){#fig-CONCONTA}
+
 ::: callout-important
 *Em quais contas contábeis você costuma fazer lançamentos?*
 :::
-
-![](images/conconta.png){#fig-CONCONTA}
 
 ### Conta Corrente (o que/onde)
 
 A CONINDCONT retorna o detalhamento do Conta Corrente (CCor). No caso do CCor 080, o SIAFI registra a estrutura da célula da despesa. Os atributos UGR e PI são opcionais (os órgãos definem se utilizarão ou não estes atributos).
 
+
+![](images/conindcont.png){#fig-CONINDCONT}
+
 ::: callout-important
 *Quando você faz lançamentos contábeis, quais tipos de Contas Correntes são sensibilizados?*
 :::
-
-![](images/conindcont.png){#fig-CONINDCONT}
 
 ### Emissão dia (quando)
 
@@ -134,11 +137,13 @@ A CONINDCONT retorna o detalhamento do Conta Corrente (CCor). No caso do CCor 08
 
 ### Doc valor (quanto)
 
+
+
+![](images/ob_codiv.png){#fig-CONDOC}
+
 ::: callout-important
 *Qual foi o maior valor lançado por você?*
 :::
-
-![](images/ob_codiv.png){#fig-CONDOC}
 
 ## Consultar dados
 
@@ -156,6 +161,6 @@ A transação BALANCETE traz os saldos do último dia de fechamento do SIAFI. Po
 
 ### CONOR (D-1)
 
-Os saldo capturados pela CONOR seguem o mesmo padrão do BALANCETE, sendo assim, a CONOR retorna os saldos do último dia do fechamento so SIAFI.
+Os saldos capturados pela CONOR seguem o mesmo padrão do BALANCETE, sendo assim, a CONOR retorna os saldos do último dia do fechamento so SIAFI.
 
 ![](images/conor_codiv.png){#fig-CONOR}
